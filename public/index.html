@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Users List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background-color: #f4f4f9;
+      color: #333;
+    }
+    h1 {
+      color: #4a90e2;
+    }
+    #users {
+      margin-top: 1rem;
+      border-collapse: collapse;
+      width: 100%;
+      max-width: 600px;
+    }
+    #users th, #users td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    #users th {
+      background-color: #4a90e2;
+      color: white;
+      text-align: left;
+    }
+    #error {
+      color: red;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Список пользователей</h1>
+  <table id="users">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Login</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div id="error"></div>
+
+  <script>
+    async function fetchUsers() {
+      try {
+        const response = await fetch('/users');
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Ошибка при загрузке пользователей');
+        }
+        const users = await response.json();
+        const tbody = document.querySelector('#users tbody');
+        tbody.innerHTML = '';
+        users.forEach(user => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = '<td>' + user.id + '</td><td>' + user.login + '</td>';
+          tbody.appendChild(tr);
+        });
+      } catch (error) {
+        document.getElementById('error').textContent = error.message;
+        document.querySelector('#users').style.display = 'none';
+      }
+    }
+    fetchUsers();
+  </script>
+</body>
+</html>
